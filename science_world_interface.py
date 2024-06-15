@@ -117,7 +117,7 @@ class ZeroShotEpisode:
         self.messages.append(make_message(SYSTEM, system))
         self.messages.append(make_message(USER, user))
 
-    def step(self, action: str) -> bool:
+    def step(self, action: str, assistant: str | None = None) -> bool:
         data = self.client.step(action)
         self.format_data(data)
 
@@ -125,7 +125,8 @@ class ZeroShotEpisode:
             print('Task complete')
             return True
 
-        self.messages.append(make_message(ASSISTANT, action))
+        assistant = assistant or action
+        self.messages.append(make_message(ASSISTANT, assistant))
         user = self.user_prompt.format(**data)
         self.messages.append(make_message(USER, user))
         return False
