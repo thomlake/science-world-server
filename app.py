@@ -15,12 +15,13 @@ def get_env() -> ScienceWorldEnv:
     return context['env']
 
 
-def enrich_state(env: ScienceWorldEnv, state: dict):
-    state['actions'] = env.getPossibleActions()
-    state['objects'] = env.getPossibleObjects()
+def get_valid_choices(env: ScienceWorldEnv):
+    actions = env.getPossibleActions()
+    objects = env.getPossibleObjects()
+    return {'actions': actions, 'objects': objects}
 
 
-@app.route('/tasks', methods=['POST'])
+@app.route('/tasks', methods=['GET'])
 def task_names():
     env = get_env()
     task_names = env.getTaskNames()
@@ -29,28 +30,39 @@ def task_names():
     return tasks, status_code
 
 
-@app.route('/reset', methods=['POST'])
-def reset():
-    env = get_env()
+@app.route('/load', methods=['POST'])
+def load():
     data = request.json
+    env = get_env()
     name = data['name']
     variation = data['variation']
-    obs, state = env.load(name, variation, generateGoldPath=True)
-    desc = env.getTaskDescription()
-    enrich_state(env, state)
-
+    env.load(name, variation, generateGoldPath=True)
+    observation, info = env.reset()
+    task_description = env.getTaskDescription()
+    choices = get_valid_choices(env)
     response = {
-        'desc': desc,
-        'obs': obs,
-        'state': state,
+        'task_description': task_description,
+        'observation': observation,
+        'info': info,
+        'choices': choices
     }
     status_code = 200
     return response, status_code
 
 
-@app.route('/info', methods=['POST'])
+@app.route('/step', methods=['POST'])
 def step():
     data = request.json
+    env = get_env()
     action = data['action']
-    step = 
-
+    observation, reward, complete, info = env.step(action)
+    choices = get_valid_choices(env)
+    response = {
+        'observation': observation,
+        'reward': reward,
+        'complete': complete,
+        'info': info,
+        'choices': choices,
+    }
+    status_code = 200
+    return response, status_code

@@ -1,0 +1,136 @@
+from __future__ import annotations
+import dataclasses
+
+import requests
+
+
+@dataclasses.dataclass
+class Client:
+    url: str = 'http://127.0.0.1:5000'
+
+    def get_tasks(self):
+        url = self.url + '/tasks'
+        response = requests.get(url=url)
+        return response.json()
+
+    def load(self, name: str, variation: int):
+        url = self.url + '/load'
+        d = {'name': name, 'variation': variation}
+        response = requests.post(url=url, json=d)
+        return response.json()
+
+    def step(self, action: str):
+        url = self.url + '/step'
+        d = {'action': action}
+        response = requests.post(url=url, json=d)
+        return response.json()
+
+
+SYSTEM = 'system'
+USER = 'user'
+ASSISTANT = 'assistant'
+
+
+def make_message(role: str, content: str) -> dict[str, str]:
+    return {'role': role, 'content': content}
+
+
+def format_bullet_list(xs: list[str]) -> str:
+    return '- ' + '\n- '.join(xs)
+
+
+def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
+    strings = []
+    for m in messages:
+        header = f'{10*"-"} [ROLE: {m["role"]}] {10*"-"}'
+        strings.append(header + '\n' + m['content'])
+
+    return '\n'.join(strings)
+
+
+ZERO_SHOT_SYSTEM_PROMPT = """\
+You are an AI scientist. {task_description}
+
+## Instructions:
+
+At each step you will be given an observation and a list of valid action templates and objects. Choose the next action that will best help you complete your specified task by selecting an action template and filling in any placeholders.
+
+### Format:
+
+Output your selected action and a short rationale below the JSON format below:
+
+```json
+{{
+   "reason": "your rationale",
+   "action": "your action"
+}}
+```"""
+
+ZERO_SHOT_USER_PROMPT_FIRST = """\
+## Observation:
+
+{observation}
+
+## Objects:
+
+{choices[objects]}
+
+## Action Templates:
+
+{choices[actions]}
+
+Please choose your next action."""
+
+
+ZERO_SHOT_USER_PROMPT = """\
+## Observation (reward = {reward}):
+
+{observation}
+
+## Objects:
+
+{choices[objects]}
+
+## Action Templates:
+
+{choices[actions]}
+
+Please choose your next action."""
+
+
+@dataclasses.dataclass
+class ZeroShotEpisode:
+    client: Client
+    task: str
+    variation: int
+    system_prompt: str = ZERO_SHOT_SYSTEM_PROMPT
+    user_prompt_first: str = ZERO_SHOT_USER_PROMPT_FIRST
+    user_prompt: str = ZERO_SHOT_USER_PROMPT
+    messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        data = self.client.load(self.task, self.variation)
+        self.format_data(data)
+
+        system = self.system_prompt.format(**data)
+        user = self.user_prompt_first.format(**data)
+        self.messages.append(make_message(SYSTEM, system))
+        self.messages.append(make_message(USER, user))
+
+    def step(self, action: str) -> bool:
+        data = self.client.step(action)
+        self.format_data(data)
+
+        if data['complete']:
+            print('Task complete')
+            return True
+
+        self.messages.append(make_message(ASSISTANT, action))
+        user = self.user_prompt.format(**data)
+        self.messages.append(make_message(USER, user))
+        return False
+
+    @staticmethod
+    def format_data(data):
+        data['choices']['objects'] = format_bullet_list(data['choices']['objects'])
+        data['choices']['actions'] = format_bullet_list(data['choices']['actions'])
