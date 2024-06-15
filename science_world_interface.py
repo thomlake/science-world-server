@@ -120,15 +120,15 @@ class ZeroShotEpisode:
     def step(self, action: str, assistant: str | None = None) -> bool:
         data = self.client.step(action)
         self.format_data(data)
+        assistant = assistant or action
+        self.messages.append(make_message(ASSISTANT, assistant))
+        user = self.user_prompt.format(**data)
+        self.messages.append(make_message(USER, user))
 
         if data['complete']:
             print('Task complete')
             return True
 
-        assistant = assistant or action
-        self.messages.append(make_message(ASSISTANT, assistant))
-        user = self.user_prompt.format(**data)
-        self.messages.append(make_message(USER, user))
         return False
 
     @staticmethod
