@@ -28,7 +28,7 @@ class Client:
 
 
 ACTION_DESCRIPTIONS = [
-    ["open/close OBJ", "Open/close a container"]
+    ["open/close OBJ", "Open/close a container"],
     ["de/activate OBJ", "Activate/deactivate a device"],
     ["connect OBJ to OBJ", "Connect electrical components"],
     ["disconnect OBJ", "Disconnect electrical components"],
