@@ -108,11 +108,9 @@ At each step of the simulation you will be given an observation and a reward bas
 
 {action_table}
 
-Choose your action by selecting an action template above and filling in any OBJ, LOC, or DURATION placeholders with appropriate values. Your selected action must **exactly** match the form of the template (but with placeholders filled in) or it will not be recognized by the simulation. At each step you may select a single action only.
+Choose your action by selecting an action template above. Fill in any OBJ, LOC, or DURATION placeholders with appropriate values. At each step you may select a single action only.
 
-Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action."
-
-BEGIN EPISODE"""
+Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action.\""""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
