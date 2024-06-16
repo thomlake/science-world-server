@@ -2,6 +2,7 @@ from __future__ import annotations
 import dataclasses
 
 import requests
+import tabulate
 
 
 @dataclasses.dataclass
@@ -24,6 +25,54 @@ class Client:
         d = {'action': action}
         response = requests.post(url=url, json=d)
         return response.json()
+
+
+ACTION_DESCRIPTIONS = [
+    ["open/close OBJ", "Open/close a container"]
+    ["de/activate OBJ", "Activate/deactivate a device"],
+    ["connect OBJ to OBJ", "Connect electrical components"],
+    ["disconnect OBJ", "Disconnect electrical components"],
+    ["use OBJ [on OBJ]", "Use a device/item"],
+    ["look around", "Describe the current room"],
+    ["look at OBJ", "Describe an object in detail"],
+    ["look in OBJ", "Describe a container’s contents"],
+    ["read OBJ", "Read a note or book"],
+    ["move OBJ to OBJ", "Move an object to a container"],
+    ["pick up OBJ", "Move an object to the inventory"],
+    ["put down OBJ", "Drop an inventory"],
+    ["item pour OBJ into OBJ", "Pour a liquid into a container"],
+    ["dunk OBJ into OBJ", "Dunk a container into a liquid"],
+    ["mix OBJ", "Chemically mix a container"],
+    ["go to LOC", "Move to a new location"],
+    ["eat OBJ", "Eat a food"],
+    ["flush OBJ", "Flush a toilet"],
+    ["focus on OBJ", "Signal intent on a task object"],
+    ["wait [DURATION]", "Take no action for some duration"],
+    ["task", "Describe current task"],
+    ["inventory", "List agent’s inventory"],
+]
+
+ACTION_TABLE = tabulate.tabulate(
+    ACTION_DESCRIPTIONS,
+    columns=['Action', 'Effect'],
+    tablefmt='github',
+)
+
+SPECIAL_ACTION_DESCRIPTIONS = [
+    ["teleport to LOC", "*teleport to a specific room"],
+]
+
+SPECIAL_ACTION_TABLE = tabulate.tabulate(
+    SPECIAL_ACTION_DESCRIPTIONS,
+    columns=['Action', 'Effect'],
+    tablefmt='github',
+)
+
+FULL_ACTION_TABLE = tabulate.tabulate(
+    ACTION_DESCRIPTIONS + SPECIAL_ACTION_DESCRIPTIONS,
+    columns=['Action', 'Effect'],
+    tablefmt='github',
+)
 
 
 SYSTEM = 'system'
@@ -49,51 +98,32 @@ def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
 
 
 ZERO_SHOT_SYSTEM_PROMPT = """\
-You are an AI scientist. {task_description}
+You are an AI scientist (the "agent") interacting with a simulation. {task_description}
 
 ## Instructions:
 
-At each step you will be given an observation and a list of valid action templates and objects. Choose the next action that will best help you complete your specified task by selecting an action template and filling in any placeholders.
+At each step of the simulation you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your specified task. The table below list all valid action templates that will be recognized by the simulation's input system.
 
-### Format:
+## Actions
 
-Output your selected action and a short rationale below the JSON format below:
+{action_table}
 
-```json
-{{
-   "reason": "your rationale",
-   "action": "your action"
-}}
-```"""
+Choose your action by selecting an action template above and filling in any OBJ placeholders with appropriate values. Your selected action must **exactly** match the form of the template or it will not be recognized by the simulation. At each step you may select a single action only.
+
+Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action."
+
+BEGIN EPISODE"""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
-## Observation:
-
 {observation}
-
-## Objects:
-
-{choices[objects]}
-
-## Action Templates:
-
-{choices[actions]}
 
 Please choose your next action."""
 
 
 ZERO_SHOT_USER_PROMPT = """\
-## Observation (reward = {reward}):
+reward: {reward}
 
 {observation}
-
-## Objects:
-
-{choices[objects]}
-
-## Action Templates:
-
-{choices[actions]}
 
 Please choose your next action."""
 
@@ -106,6 +136,7 @@ class Episode_ZeroShot:
     system_prompt: str = ZERO_SHOT_SYSTEM_PROMPT
     user_prompt_first: str = ZERO_SHOT_USER_PROMPT_FIRST
     user_prompt: str = ZERO_SHOT_USER_PROMPT
+    action_table: str = ACTION_TABLE
     messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
