@@ -166,13 +166,11 @@ You are an AI scientist (the "agent") interacting with an environment through a 
 
 ## Instructions:
 
-At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent variables that should be replaced with a valid object, location, or duration based on your current environment.
-
-## Actions:
+At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent variables that should be replaced with a valid value based on your current environment.
 
 {action_table}
 
-Choose your action by outputting one of the action templates above with appropriate variables filled in. Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action". At each step you may select a single action only."""
+Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action". Do not include unbound variables in your action. At each step you may select a single action."""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
