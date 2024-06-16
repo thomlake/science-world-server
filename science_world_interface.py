@@ -129,7 +129,7 @@ reward: {reward}
 
 ## OBJs and LOCs:
 
-{{choices[objects]}}
+{choices[objects]}
 
 Please choose your next action."""
 
