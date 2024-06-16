@@ -99,7 +99,7 @@ Please choose your next action."""
 
 
 @dataclasses.dataclass
-class ZeroShotEpisode:
+class Episode_ZeroShot:
     client: Client
     task: str
     variation: int
@@ -127,6 +127,77 @@ class ZeroShotEpisode:
 
         if data['complete']:
             print('Task complete')
+            return True
+
+        return False
+
+    @staticmethod
+    def format_data(data):
+        data['choices']['objects'] = format_bullet_list(data['choices']['objects'])
+        data['choices']['actions'] = format_bullet_list(data['choices']['actions'])
+
+
+ZERO_SHOT_DYNAMIC_SYSTEM_SYSTEM_PROMPT = """\
+You are an AI scientist (the "agent"). {task_description}
+
+## Instructions:
+
+At each step you will be given an observation. Choose the next action that will best help you complete your specified task by selecting an action template from the option below and filling in any OBJ placeholders. Your output should consist of any reasoning, followed by your selected actions denoted as "Action: your selected action".
+
+## Objects:
+
+{choices[objects]}
+
+## Action Templates:
+
+{choices[actions]}"""
+
+ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT_FIRST = """\
+{observation}
+
+Please choose your next action."""
+
+ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT = """\
+reward: {reward}
+
+{observation}
+
+Please choose your next action."""
+
+
+@dataclasses.dataclass
+class Episode_ZeroShotDynamicSystem:
+    client: Client
+    task: str
+    variation: int
+    system_prompt: str = ZERO_SHOT_DYNAMIC_SYSTEM_SYSTEM_PROMPT
+    user_prompt_first: str = ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT_FIRST
+    user_prompt: str = ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT
+    messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        data = self.client.load(self.task, self.variation)
+        self.format_data(data)
+
+        system = self.system_prompt.format(**data)
+        user = self.user_prompt_first.format(**data)
+        self.messages.append(make_message(SYSTEM, system))
+        self.messages.append(make_message(USER, user))
+
+    def step(self, action: str, assistant: str | None = None) -> bool:
+        data = self.client.step(action)
+        self.format_data(data)
+
+        system = self.system_prompt.format(**data)
+        self.messages[0] = make_message(SYSTEM, system)
+
+        assistant = assistant or action
+        self.messages.append(make_message(ASSISTANT, assistant))
+        user = self.user_prompt.format(**data)
+        self.messages.append(make_message(USER, user))
+
+        if data['complete']:
+            print('Complete is True:', data['complete'])
             return True
 
         return False
