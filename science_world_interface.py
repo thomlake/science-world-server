@@ -110,7 +110,7 @@ At each step of the simulation you will be given an observation and a reward bas
 
 Choose your action by selecting an action template above. Fill in any placeholders like OBJ or LOC by substituting them with appropriate values. At each step you may select a single action only.
 
-Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action.\""""
+Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action" with all placeholders filled in with values (do not list them separately)."""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
