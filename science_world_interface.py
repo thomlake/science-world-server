@@ -169,7 +169,7 @@ At each step, you will be given an observation and a reward based on your previo
 
 {action_table}
 
-Choose your action by selecting an action template above. Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action." At each step you may select a single action only."""
+Choose your action by selecting an action template above. Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action" At each step you may select a single action only."""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
