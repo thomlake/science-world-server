@@ -115,6 +115,10 @@ Your output should consist of your reasoning followed by your selected action on
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
 
+## OBJs and LOCs:
+
+{{choices[objects]}}
+
 Please choose your next action."""
 
 
@@ -122,6 +126,10 @@ ZERO_SHOT_USER_PROMPT = """\
 reward: {reward}
 
 {observation}
+
+## OBJs and LOCs:
+
+{{choices[objects]}}
 
 Please choose your next action."""
 
