@@ -162,15 +162,17 @@ def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
 
 
 ZERO_SHOT_SYSTEM_PROMPT = """\
-You are an AI scientist (the "agent") interacting with an environment through a textual interface. {task_description}
+You are an AI scientist (the "agent") interacting with an environment through a text interface. {task_description}
 
 ## Instructions:
 
-At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent variables that should be replaced with a valid value based on your current environment.
+At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task.
 
-{action_table}
+The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent variables. Variable names should be replaced with a valid values based on your current environment when choosing an action.
 
-Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action". Do not include unbound variables in your action. At each step you may select a single action."""
+Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action". Do not include unbound variables in your action. At each step you may select a single action.
+
+{action_table}"""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
