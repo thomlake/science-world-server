@@ -101,19 +101,17 @@ def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
 
 
 ZERO_SHOT_SYSTEM_PROMPT = """\
-You are an AI scientist (the "agent") interacting with a simulation. {task_description}
+You are an AI scientist (the "agent") interacting with an environment through a textual interface.  {task_description}
 
 ## Instructions:
 
-At each step of the simulation you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your specified task. The table below list all valid action templates that will be recognized by the simulation's input system.
+At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent placeholder values. Do **NOT** include value like "OBJ" in your output. They should be replaced with actual valid values based on your current environment.
 
-## Actions
+## Actions:
 
 {action_table}
 
-Choose your action by selecting an action template above. Fill in any placeholders like OBJ or LOC by substituting them with appropriate values. At each step you may select a single action only.
-
-Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action" with all placeholders filled in with values (do not list them separately)."""
+Choose your action by selecting an action template above. Your output should consist of your reasoning followed by your selected action on a single line with the format "Action: your selected action." At each step you may select a single action only."""
 
 ZERO_SHOT_USER_PROMPT_FIRST = """\
 {observation}
