@@ -27,30 +27,58 @@ class Client:
         return response.json()
 
 
+# ACTION_DESCRIPTIONS = [
+#     ["open OBJ", "Open a container or door"],
+#     ["close OBJ", "Close a container or door"],
+#     ["activate OBJ", "Activate a device"],
+#     ["deactivate OBJ", "Deactivate a device"],
+#     ["connect OBJ to OBJ", "Connect electrical components"],
+#     ["disconnect OBJ", "Disconnect electrical components"],
+#     ["use OBJ", "Use a device/item"],
+#     ["use OBJ on OBJ", "Use a device/item on another device/item"],
+#     ["look around", "Describe the current room"],
+#     ["look at OBJ", "Describe an object in detail"],
+#     ["look in OBJ", "Describe a container’s contents"],
+#     ["read OBJ", "Read a note or book"],
+#     ["move OBJ to OBJ", "Move an object to a container"],
+#     ["pick up OBJ", "Move an object to the inventory"],
+#     ["put down OBJ", "Drop an inventory"],
+#     ["item pour OBJ into OBJ", "Pour a liquid into a container"],
+#     ["dunk OBJ into OBJ", "Dunk a container into a liquid"],
+#     ["mix OBJ", "Chemically mix a container"],
+#     ["go to LOC", "Move agent to a new location"],
+#     ["eat OBJ", "Eat a food"],
+#     ["flush OBJ", "Flush a toilet"],
+#     ["focus on OBJ", "Signal intent on a task object"],
+#     ["wait DURATION", "Take no action for some duration"],
+#     ["task", "Describe current task"],
+#     ["inventory", "List agent’s inventory"],
+# ]
+
 ACTION_DESCRIPTIONS = [
-    ["open OBJ", "Open a container or door"],
-    ["close OBJ", "Close a container or door"],
-    ["activate OBJ", "Activate a device"],
-    ["deactivate OBJ", "Deactivate a device"],
-    ["connect OBJ to OBJ", "Connect electrical components"],
-    ["disconnect OBJ", "Disconnect electrical components"],
-    ["use OBJ", "Use a device/item"],
-    ["use OBJ on OBJ", "Use a device/item on another device/item"],
+    ["open VALUE", "Open a container or door"],
+    ["close VALUE", "Close a container or door"],
+    ["activate VALUE", "Activate a device"],
+    ["deactivate VALUE", "Deactivate a device"],
+    ["connect VALUE to VALUE", "Connect electrical components"],
+    ["disconnect VALUE", "Disconnect electrical components"],
+    ["use VALUE", "Use a device/item"],
+    ["use VALUE on VALUE", "Use a device/item on another device/item"],
     ["look around", "Describe the current room"],
-    ["look at OBJ", "Describe an object in detail"],
-    ["look in OBJ", "Describe a container’s contents"],
-    ["read OBJ", "Read a note or book"],
-    ["move OBJ to OBJ", "Move an object to a container"],
-    ["pick up OBJ", "Move an object to the inventory"],
-    ["put down OBJ", "Drop an inventory"],
-    ["item pour OBJ into OBJ", "Pour a liquid into a container"],
-    ["dunk OBJ into OBJ", "Dunk a container into a liquid"],
-    ["mix OBJ", "Chemically mix a container"],
-    ["go to LOC", "Move to a new location"],
-    ["eat OBJ", "Eat a food"],
-    ["flush OBJ", "Flush a toilet"],
-    ["focus on OBJ", "Signal intent on a task object"],
-    ["wait DURATION", "Take no action for some duration"],
+    ["look at VALUE", "Describe an VALUEect in detail"],
+    ["look in VALUE", "Describe a container’s contents"],
+    ["read VALUE", "Read a note or book"],
+    ["move VALUE to VALUE", "Move an VALUEect to a container"],
+    ["pick up VALUE", "Move an VALUEect to the inventory"],
+    ["put down VALUE", "Drop an inventory"],
+    ["item pour VALUE into VALUE", "Pour a liquid into a container"],
+    ["dunk VALUE into VALUE", "Dunk a container into a liquid"],
+    ["mix VALUE", "Chemically mix a container"],
+    ["go to VALUE", "Move agent to a new location"],
+    ["eat VALUE", "Eat a food"],
+    ["flush VALUE", "Flush a toilet"],
+    ["focus on VALUE", "Signal intent on a task VALUEect"],
+    ["wait VALUE", "Take no action for some duration"],
     ["task", "Describe current task"],
     ["inventory", "List agent’s inventory"],
 ]
@@ -60,6 +88,36 @@ ACTION_TABLE = tabulate.tabulate(
     headers=['Action Template', 'Effect'],
     tablefmt='github',
 )
+
+
+ACTION_DESCRIPTIONS_WITH_EXAMPLES = [
+    ["open OBJ", "Open a container or door", "open jar"],
+    ["close OBJ", "Close a container or door", "close jar"],
+    ["activate OBJ", "Activate a device", "activate oven"],
+    ["deactivate OBJ", "Deactivate a device", "deactivate oven"],
+    ["connect OBJ to OBJ", "Connect electrical components", "connect OBJ to OBJ"],
+    ["disconnect OBJ", "Disconnect electrical components", "disconnect OBJ"],
+    ["use OBJ", "Use a device/item", "use OBJ"],
+    ["use OBJ on OBJ", "Use a device/item on another device/item", "use OBJ on OBJ"],
+    ["look around", "Describe the current room", "look around"],
+    ["look at OBJ", "Describe an object in detail", "look at OBJ"],
+    ["look in OBJ", "Describe a container’s contents", "look in OBJ"],
+    ["read OBJ", "Read a note or book", "read OBJ"],
+    ["move OBJ to OBJ", "Move an object to a container", "move OBJ to OBJ"],
+    ["pick up OBJ", "Move an object to the inventory", "pick up OBJ"],
+    ["put down OBJ", "Drop an inventory", "put down OBJ"],
+    ["item pour OBJ into OBJ", "Pour a liquid into a container", "item pour OBJ into OBJ"],
+    ["dunk OBJ into OBJ", "Dunk a container into a liquid", "dunk OBJ into OBJ"],
+    ["mix OBJ", "Chemically mix a container", "mix OBJ"],
+    ["go to LOC", "Move to a new location", "go to LOC"],
+    ["eat OBJ", "Eat a food", "eat OBJ"],
+    ["flush OBJ", "Flush a toilet", "flush OBJ"],
+    ["focus on OBJ", "Signal intent on a task object", "focus on OBJ"],
+    ["wait DURATION", "Take no action for some duration", "wait DURATION"],
+    ["task", "Describe current task", "task"],
+    ["inventory", "List agent’s inventory", "inventory"],
+]
+
 
 SPECIAL_ACTION_DESCRIPTIONS = [
     ["teleport to LOC", "Teleport to a specific room"],
@@ -101,11 +159,11 @@ def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
 
 
 ZERO_SHOT_SYSTEM_PROMPT = """\
-You are an AI scientist (the "agent") interacting with an environment through a textual interface.  {task_description}
+You are an AI scientist (the "agent") interacting with an environment through a textual interface. {task_description}
 
 ## Instructions:
 
-At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "OBJ", "LOC", and "DURATION" in the table represent placeholder values. Do **NOT** include value like "OBJ" in your output. They should be replaced with actual valid values based on your current environment.
+At each step, you will be given an observation and a reward based on your previous action. Choose the next action to execute that will best help you complete your task. The table below list all valid action templates that will be recognized by the input system. The terms "VALUE" in the table represent placeholder values. Any occurrence of "VALUE" should be replaced with a valid object, location, etc based on your current environment.
 
 ## Actions:
 
