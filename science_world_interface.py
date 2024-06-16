@@ -174,10 +174,13 @@ class Episode_ZeroShotDynamicSystem:
     user_prompt_first: str = ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT_FIRST
     user_prompt: str = ZERO_SHOT_DYNAMIC_SYSTEM_USER_PROMPT
     messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
+    task_description: str = ''
 
     def __post_init__(self):
         data = self.client.load(self.task, self.variation)
         self.format_data(data)
+
+        self.task_description = data['task_description']
 
         system = self.system_prompt.format(**data)
         user = self.user_prompt_first.format(**data)
@@ -188,7 +191,7 @@ class Episode_ZeroShotDynamicSystem:
         data = self.client.step(action)
         self.format_data(data)
 
-        system = self.system_prompt.format(**data)
+        system = self.system_prompt.format(task_description=self.task_description, **data)
         self.messages[0] = make_message(SYSTEM, system)
 
         assistant = assistant or action
