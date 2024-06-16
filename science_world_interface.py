@@ -138,11 +138,13 @@ class Episode_ZeroShot:
 
 
 ZERO_SHOT_DYNAMIC_SYSTEM_SYSTEM_PROMPT = """\
-You are an AI scientist (the "agent"). {task_description}
+You are an AI scientist (the "agent") interacting with a simulation. {task_description}
 
 ## Instructions:
 
-At each step you will be given an observation and a reward based on your previous action. Choose the next action that will best help you complete your specified task by selecting an action template from the option below and filling in any OBJ placeholders. Your output should consist of any reasoning, followed by your selected actions, denoted as "Action: your selected action." At each step you may select a single action only.
+At each step of the simulation you will be given an observation and a reward based on your previous action. Choose the next action that will best help you complete your specified task by selecting an action template from the option below, and filling in any OBJ placeholders with appropriate value. Selected actions must exactly match the template or they will not be recognized by the simulation.
+
+Your output should consist of any reasoning, followed by your selected actions, denoted as "Action: your selected action." At each step you may select a single action only.
 
 ## Objects:
 
