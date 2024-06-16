@@ -54,7 +54,7 @@ ACTION_DESCRIPTIONS = [
 
 ACTION_TABLE = tabulate.tabulate(
     ACTION_DESCRIPTIONS,
-    columns=['Action', 'Effect'],
+    headers=['Action Template', 'Effect'],
     tablefmt='github',
 )
 
@@ -64,13 +64,13 @@ SPECIAL_ACTION_DESCRIPTIONS = [
 
 SPECIAL_ACTION_TABLE = tabulate.tabulate(
     SPECIAL_ACTION_DESCRIPTIONS,
-    columns=['Action', 'Effect'],
+    headers=['Action Template', 'Effect'],
     tablefmt='github',
 )
 
 FULL_ACTION_TABLE = tabulate.tabulate(
     ACTION_DESCRIPTIONS + SPECIAL_ACTION_DESCRIPTIONS,
-    columns=['Action', 'Effect'],
+    headers=['Action Template', 'Effect'],
     tablefmt='github',
 )
 
