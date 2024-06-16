@@ -142,7 +142,7 @@ You are an AI scientist (the "agent"). {task_description}
 
 ## Instructions:
 
-At each step you will be given an observation. Choose the next action that will best help you complete your specified task by selecting an action template from the option below and filling in any OBJ placeholders. Your output should consist of any reasoning, followed by your selected actions denoted as "Action: your selected action".
+At each step you will be given an observation and a reward based on your previous action. Choose the next action that will best help you complete your specified task by selecting an action template from the option below and filling in any OBJ placeholders. Your output should consist of any reasoning, followed by your selected actions, denoted as "Action: your selected action." At each step you may select a single action only.
 
 ## Objects:
 
