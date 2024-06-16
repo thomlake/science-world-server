@@ -28,11 +28,14 @@ class Client:
 
 
 ACTION_DESCRIPTIONS = [
-    ["open/close OBJ", "Open/close a container"],
-    ["de/activate OBJ", "Activate/deactivate a device"],
+    ["open OBJ", "Open a container or door"],
+    ["close OBJ", "Close a container or door"],
+    ["activate OBJ", "Activate a device"],
+    ["deactivate OBJ", "Deactivate a device"],
     ["connect OBJ to OBJ", "Connect electrical components"],
     ["disconnect OBJ", "Disconnect electrical components"],
-    ["use OBJ [on OBJ]", "Use a device/item"],
+    ["use OBJ", "Use a device/item"],
+    ["use OBJ on OBJ", "Use a device/item on another device/item"],
     ["look around", "Describe the current room"],
     ["look at OBJ", "Describe an object in detail"],
     ["look in OBJ", "Describe a container’s contents"],
@@ -59,7 +62,7 @@ ACTION_TABLE = tabulate.tabulate(
 )
 
 SPECIAL_ACTION_DESCRIPTIONS = [
-    ["teleport to LOC", "*teleport to a specific room"],
+    ["teleport to LOC", "Teleport to a specific room"],
 ]
 
 SPECIAL_ACTION_TABLE = tabulate.tabulate(
