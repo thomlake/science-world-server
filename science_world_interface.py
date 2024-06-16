@@ -143,7 +143,7 @@ class Episode_ZeroShot:
         data = self.client.load(self.task, self.variation)
         self.format_data(data)
 
-        system = self.system_prompt.format(**data)
+        system = self.system_prompt.format(**data, action_table=self.action_table)
         user = self.user_prompt_first.format(**data)
         self.messages.append(make_message(SYSTEM, system))
         self.messages.append(make_message(USER, user))
