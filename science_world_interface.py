@@ -146,14 +146,17 @@ class Episode_ZeroShot:
     system_prompt: str = ZERO_SHOT_SYSTEM_PROMPT
     user_prompt_first: str = ZERO_SHOT_USER_PROMPT_FIRST
     user_prompt: str = ZERO_SHOT_USER_PROMPT
-    action_table: str = ACTION_TABLE
     messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
         data = self.client.load(self.task, self.variation)
         self.format_data(data)
 
-        system = self.system_prompt.format(**data, action_table=self.action_table)
+        system = self.system_prompt.format(
+            **data,
+            action_table=ACTION_TABLE,
+            action_list=ACTION_LIST,
+        )
         user = self.user_prompt_first.format(**data)
         self.messages.append(make_message(SYSTEM, system))
         self.messages.append(make_message(USER, user))
