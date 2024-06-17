@@ -39,12 +39,14 @@ def load():
     env.load(name, variation, generateGoldPath=True)
     observation, info = env.reset()
     task_description = env.getTaskDescription()
+    gold_path = env.getGoldActionSequence()
     choices = get_valid_choices(env)
     response = {
         'task_description': task_description,
+        'gold_path': gold_path,
         'observation': observation,
         'info': info,
-        'choices': choices
+        'choices': choices,
     }
     status_code = 200
     return response, status_code

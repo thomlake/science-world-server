@@ -1,6 +1,7 @@
 from __future__ import annotations
 import dataclasses
 import json
+from typing import Any
 
 import requests
 import tabulate
@@ -188,10 +189,12 @@ class Episode_ZeroShot:
     user_prompt_first: str = ZERO_SHOT_USER_PROMPT_FIRST
     user_prompt: str = ZERO_SHOT_USER_PROMPT
     messages: list[dict[str, str]] = dataclasses.field(default_factory=list)
+    data: dict[str, Any] = dataclasses.field(default_factory=dict)
 
     def __post_init__(self):
         data = self.client.load(self.task, self.variation)
         self.format_data(data)
+        self.data = data
 
         system = self.system_prompt.format(
             **data,
@@ -206,6 +209,8 @@ class Episode_ZeroShot:
     def step(self, action: str, assistant: str | None = None) -> bool:
         data = self.client.step(action)
         self.format_data(data)
+        self.data = data
+
         assistant = assistant or action
         self.messages.append(make_message(ASSISTANT, assistant))
         user = self.user_prompt.format(**data)
