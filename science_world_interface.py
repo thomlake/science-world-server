@@ -82,19 +82,31 @@ def convert_action_description_to_json_template(action: str, description: str) -
     words = action.split()
     placeholders = {}
 
-    if 'LOC' in words:
-        placeholders['LOC'] = '?'
+    names = 'XYZABCQRS'
+    while True:
+        try:
+            i = next(i for i, w in enumerate(words) if w == 'LOC' or w == 'OBJ')
+        except StopIteration:
+            break
 
-    num_objs = sum(1 for w in words if w == 'OBJ')
-    if num_objs == 1:
-        placeholders['OBJ'] = '?'
-    elif num_objs > 0:
-        i = 1
-        while 'OBJ' in words:
-            k = f'OBJ_{i}'
-            placeholders[k] = '?'
-            words[words.index('OBJ')] = k
-            i += 1
+        k = names[0]
+        names = names[1:]
+        words[i] = k
+        placeholders[k] = '?'
+
+    # if 'LOC' in words:
+    #     placeholders['LOC'] = '?'
+
+    # num_objs = sum(1 for w in words if w == 'OBJ')
+    # if num_objs == 1:
+    #     placeholders['OBJ'] = '?'
+    # elif num_objs > 0:
+    #     i = 1
+    #     while 'OBJ' in words:
+    #         k = f'OBJ_{i}'
+    #         placeholders[k] = '?'
+    #         words[words.index('OBJ')] = k
+    #         i += 1
 
     template = json.dumps({'action': ' '.join(words), **placeholders}, ensure_ascii=False)
     return f'{description[0].upper()}{description[1:]}: `{template}`'
