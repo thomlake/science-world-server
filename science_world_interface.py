@@ -1,5 +1,6 @@
 from __future__ import annotations
 import dataclasses
+import json
 
 import requests
 import tabulate
@@ -75,6 +76,29 @@ ACTION_TABLE = tabulate.tabulate(
 )
 
 ACTION_LIST = format_number_list(join_pairs(ACTION_DESCRIPTIONS))
+
+
+def convert_action_description_to_json_template(action: str, description: str) -> str:
+    words = action.split()
+    placeholders = {}
+    if 'LOC' in words:
+        placeholders['LOC'] = '?'
+
+    i = 1
+    while 'OBJ' in words:
+        k = f'OBJ_{i}'
+        placeholders[k] = '?'
+        words[words.index('OBJ')] = k
+        i += 1
+
+    template = json.dumps({'action': ' '.join(words), **placeholders}, ensure_ascii=False)
+    return f'`{template}`: {description}'
+
+
+ACTION_JSON_TEMPLATES = '\n\n'.join(
+    convert_action_description_to_json_template(k, v) for k, v in ACTION_DESCRIPTIONS
+)
+
 
 SPECIAL_ACTION_DESCRIPTIONS = [
     ["teleport to LOC", "Teleport to a specific room"],
@@ -156,6 +180,7 @@ class Episode_ZeroShot:
             **data,
             action_table=ACTION_TABLE,
             action_list=ACTION_LIST,
+            action_json_templates=ACTION_JSON_TEMPLATES,
         )
         user = self.user_prompt_first.format(**data)
         self.messages.append(make_message(SYSTEM, system))
