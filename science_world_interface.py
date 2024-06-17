@@ -27,7 +27,16 @@ class Client:
         return response.json()
 
 
-# def make_references_unique():
+def format_bullet_list(xs: list[str]) -> str:
+    return '\n'.join(f'- {x}' for x in xs)
+
+
+def format_number_list(xs: list[str]) -> str:
+    return '\n'.join(f'{i}. {x}' for i, x in enumerate(xs))
+
+
+def join_pairs(xs: list[tuple[str, str]]) -> list[str]:
+    return [f'{k}: {v}' for k, v in xs]
 
 
 ACTION_DESCRIPTIONS = [
@@ -65,6 +74,8 @@ ACTION_TABLE = tabulate.tabulate(
     tablefmt='github',
 )
 
+ACTION_LIST = format_number_list(join_pairs(ACTION_TABLE))
+
 SPECIAL_ACTION_DESCRIPTIONS = [
     ["teleport to LOC", "Teleport to a specific room"],
 ]
@@ -89,10 +100,6 @@ ASSISTANT = 'assistant'
 
 def make_message(role: str, content: str) -> dict[str, str]:
     return {'role': role, 'content': content}
-
-
-def format_bullet_list(xs: list[str]) -> str:
-    return '- ' + '\n- '.join(xs)
 
 
 def convert_messages_to_str(messages: list[dict[str, str]]) -> str:
