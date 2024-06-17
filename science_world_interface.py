@@ -32,7 +32,7 @@ def format_bullet_list(xs: list[str]) -> str:
 
 
 def format_number_list(xs: list[str]) -> str:
-    return '\n'.join(f'{i}. {x}' for i, x in enumerate(xs))
+    return '\n'.join(f'{i}. {x}' for i, x in enumerate(xs, start=1))
 
 
 def join_pairs(xs: list[tuple[str, str]]) -> list[str]:
