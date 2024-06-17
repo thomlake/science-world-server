@@ -81,21 +81,26 @@ ACTION_LIST = format_number_list(join_pairs(ACTION_DESCRIPTIONS))
 def convert_action_description_to_json_template(action: str, description: str) -> str:
     words = action.split()
     placeholders = {}
+
     if 'LOC' in words:
         placeholders['LOC'] = '?'
 
-    i = 1
-    while 'OBJ' in words:
-        k = f'OBJ_{i}'
-        placeholders[k] = '?'
-        words[words.index('OBJ')] = k
-        i += 1
+    num_objs = sum(1 for w in words if w == 'OBJ')
+    if num_objs == 1:
+        placeholders['OBJ'] = '?'
+    elif num_objs > 0:
+        i = 1
+        while 'OBJ' in words:
+            k = f'OBJ_{i}'
+            placeholders[k] = '?'
+            words[words.index('OBJ')] = k
+            i += 1
 
     template = json.dumps({'action': ' '.join(words), **placeholders}, ensure_ascii=False)
-    return f'`{template}`: {description}'
+    return f'{description[0].upper()}{description[1:]}: `{template}`'
 
 
-ACTION_JSON_TEMPLATES = '\n\n'.join(
+ACTION_JSON_TEMPLATES = format_number_list(
     convert_action_description_to_json_template(k, v) for k, v in ACTION_DESCRIPTIONS
 )
 
