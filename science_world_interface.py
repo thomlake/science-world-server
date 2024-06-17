@@ -173,7 +173,7 @@ Please choose your next action."""
 
 
 ZERO_SHOT_USER_PROMPT = """\
-(reward: {reward}, score: {score}, complete: {complete})
+(reward: {reward}, score: {info[score]}, complete: {complete})
 
 {observation}
 
