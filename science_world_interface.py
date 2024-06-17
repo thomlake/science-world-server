@@ -74,7 +74,7 @@ ACTION_TABLE = tabulate.tabulate(
     tablefmt='github',
 )
 
-ACTION_LIST = format_number_list(join_pairs(ACTION_TABLE))
+ACTION_LIST = format_number_list(join_pairs(ACTION_DESCRIPTIONS))
 
 SPECIAL_ACTION_DESCRIPTIONS = [
     ["teleport to LOC", "Teleport to a specific room"],
